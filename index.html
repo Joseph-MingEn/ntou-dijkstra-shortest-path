@@ -28,7 +28,16 @@
         <section class="panel table-panel"><div class="panel-title"><span>DIST / PARENT 表</span><span id="table-count"></span></div><div class="table-wrap"><table><thead><tr><th>點</th><th>DIST</th><th>PARENT</th><th>狀態</th></tr></thead><tbody id="table-body"></tbody></table></div></section>
       </aside>
     </div>
-    <section class="panel lesson"><div><span class="eyebrow">THE KEY IDEA</span><h2>為什麼取出時就能定案？</h2></div><div><p>取出有效條目時，它是所有尚未定案候選點中距離最小的。其他可能的路如果還要經過尚未定案的點，必須先到達一個距離<strong>至少一樣大</strong>的點；邊權又都是非負，繼續走只會維持或增加距離，因此不可能找到更短的路。</p><p>距離可以相等，所以不一定「嚴格更大」。本圖還有另一條長度同為 9 的路：0 → 1 → 2 → 4 → 3 → 5；程式只在距離變小時更新 parent，因此保留題目指定的 0 → 1 → 3 → 5。</p><a href="dijkstra.cpp">查看 C++ 原始碼 ↗</a> <a href="https://github.com/Joseph-MingEn/ntou-dijkstra-shortest-path#readme">閱讀專案說明 ↗</a></div></section>
+    <section class="panel lesson guide" aria-labelledby="guide-title">
+      <div class="guide-heading"><span class="eyebrow">DIJKSTRA GUIDE</span><h2 id="guide-title">看懂最短路徑</h2><p>從演算法原理，到本題的成本計算。</p><a class="repo-link" href="https://github.com/Joseph-MingEn/ntou-dijkstra-shortest-path">查看 GitHub 專案 ↗</a></div>
+      <div class="guide-content">
+        <section><h3>01 / 演算法原理</h3><p>Dijkstra 從起點出發，每次選出目前距離最小的有效節點，並檢查它的相鄰邊。由於邊權非負，其他尚未定案的路徑必須先經過距離<strong>至少一樣大</strong>的候選點，繼續走不會更短，因此這個節點的距離可以定案。距離可能相等；若有負權邊，就不能使用這個推論。</p></section>
+        <section><h3>02 / 演算法步驟</h3><ol><li>初始化：起點 dist 為 0，其餘為 ∞；將 (0, 起點) 放入最小堆。</li><li>取出距離最小的 (dist, node)。若取出的距離與目前 dist 不同，代表條目已過期，直接跳過。</li><li>檢查每條相鄰邊：若 <code>dist[node] + weight &lt; dist[next]</code>，就更新距離與 parent，並將新條目放入堆中。這稱為「鬆弛」。</li><li>重複直到佇列清空；從終點沿 parent 反向追溯，再反轉得到完整路徑。</li></ol></section>
+        <section><h3>03 / 本題路徑成本計算</h3><p>路徑 <strong>0 → 1 → 3 → 5</strong> 的邊權分別為 2、4、3，因此總成本為 <strong>2 + 4 + 3 = 9</strong>。最終距離依節點 0–5 為 <code>[0, 2, 3, 6, 5, 9]</code>。</p><p>另一條路徑 0 → 1 → 2 → 4 → 3 → 5 的成本為 2 + 1 + 2 + 1 + 3 = 9，也同樣最短。本程式只在距離<strong>嚴格變小</strong>時更新 parent，所以保留先找到的題目指定路徑。</p></section>
+        <section><h3>04 / 運算成本</h3><p>設 V 為節點數、E 為無向邊數。本實作使用鄰接串列與最小堆，採 lazy deletion 時，<strong>時間複雜度</strong>為 O(V + E log(E + 1))，堆最多可保留 O(E) 個條目。對本題這類簡單圖，也常寫成 O((V + E) log V)；本題 V = 6、E = 8。</p><p><strong>空間複雜度</strong>為 O(V + E)：鄰接串列存放節點及每條無向邊的兩個方向，dist／parent 各需 O(V)，堆最多需 O(E)。</p></section>
+        <div class="guide-links"><a href="dijkstra.cpp">查看 C++ 原始碼 ↗</a><a href="https://github.com/Joseph-MingEn/ntou-dijkstra-shortest-path">GitHub 專案儲存庫 ↗</a><a href="https://github.com/Joseph-MingEn/ntou-dijkstra-shortest-path#readme">閱讀 README ↗</a></div>
+      </div>
+    </section>
     <footer>資料結構作業 · Dijkstra 最短路徑 <span>以 C++ 與原生 JavaScript 實作</span></footer>
   </main>
 </body>

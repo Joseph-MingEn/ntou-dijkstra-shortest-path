@@ -9,3 +9,12 @@ assert.equal(trace[0].queue[0].node, 0);
 assert.equal(trace[0].queue[0].distance, 0);
 assert.equal(last.settled.filter(Boolean).length, 6);
 console.log('網頁演算法測試通過');
+const fs = require('node:fs');
+const html = fs.readFileSync('index.html', 'utf8');
+const readme = fs.readFileSync('README.md', 'utf8');
+for (const document of [html, readme]) {
+  for (const required of ['演算法', '成本計算', '時間複雜度', '空間複雜度', '2 + 4 + 3', 'https://github.com/Joseph-MingEn/ntou-dijkstra-shortest-path']) {
+    assert.ok(document.includes(required), `說明缺少：${required}`);
+  }
+}
+console.log('說明內容測試通過');
