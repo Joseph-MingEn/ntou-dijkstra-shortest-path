@@ -1,2 +1,26 @@
-# ntou-dijkstra-shortest-path
-資料結構作業：Dijkstra 最短路徑與互動式視覺化
+# 最短路徑派遣：Dijkstra
+
+以 C++ 實作題目指定的無向加權圖，並以靜態網頁逐步展示優先佇列、距離、parent、鬆弛和過期條目跳過。網頁中 A–F 分別對應節點 0–5。
+
+## 執行
+
+```sh
+c++ -std=c++17 -Wall -Wextra -pedantic dijkstra.cpp -o /tmp/dijkstra
+/tmp/dijkstra
+bash tests/run.sh
+```
+
+預期輸出：
+
+```text
+dist[5] = 9
+路徑: 0 -> 1 -> 3 -> 5
+```
+
+開啟 `index.html` 可使用互動頁面；所有資源皆為相對路徑，適合 GitHub Pages。作業規格與工作流程見 [docs/workflow.md](docs/workflow.md)。
+
+## 正確性與同長路徑
+
+最小堆取出的有效條目，其距離不大於任何尚待處理的候選距離。任何尚未探索的替代路徑都要先經過這類距離至少一樣大的點，因邊權非負，繼續走不會變短，所以取出的距離可以定案。相等距離的點是可能存在的；負權邊則不符合此推理。
+
+另一條最短路徑 0→1→2→4→3→5 也長 9。演算法僅在找到嚴格更短的路時更新 parent，因此保留先找到的 0→1→3→5。佇列中改善前的舊條目會在取出時跳過。

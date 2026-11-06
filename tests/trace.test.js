@@ -1,0 +1,11 @@
+const assert = require('node:assert/strict');
+const { createTrace } = require('../trace.js');
+const trace = createTrace();
+const last = trace.at(-1);
+assert.deepEqual(last.dist, [0, 2, 3, 6, 5, 9]);
+assert.deepEqual(last.path, [0, 1, 3, 5]);
+assert.ok(trace.some(s => s.kind === 'stale'));
+assert.equal(trace[0].queue[0].node, 0);
+assert.equal(trace[0].queue[0].distance, 0);
+assert.equal(last.settled.filter(Boolean).length, 6);
+console.log('網頁演算法測試通過');
