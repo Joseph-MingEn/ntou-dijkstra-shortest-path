@@ -33,10 +33,23 @@
       }
     }
     const path = []; for (let n = 5; n !== -1; n = parent[n]) path.unshift(n);
-    record('finish', '完成：最短距離為 9', '沿 parent 從終點往回追，得到 0 → 1 → 3 → 5。', -1, null, path);
+    record('finish', '完成！到 F 最短距離為 9', '佇列已清空，沿 parent 從終點回溯：A → B → D → F（0 → 1 → 3 → 5），總長 9。粗綠線就是這條最短路徑。', -1, null, path);
     return trace;
   }
-  const api = {edges, createTrace};
+  function edgeKind(state, u, v) {
+    const matches = (a, b) => (a === u && b === v) || (a === v && b === u);
+    if (state.path.some((node, i) => i > 0 && matches(node, state.path[i - 1]))) return 'path';
+    if (state.edge && matches(...state.edge)) return 'active';
+    if ((state.settled[u] && state.parent[u] === v) || (state.settled[v] && state.parent[v] === u)) return 'tree';
+    return 'default';
+  }
+  function nodeKind(state, node) {
+    if (state.path.includes(node)) return 'path';
+    if (state.current === node && state.kind !== 'stale') return 'current';
+    if (state.settled[node]) return 'done';
+    return state.queue.some(item => item.node === node && item.distance === state.dist[node]) ? 'queued' : 'unknown';
+  }
+  const api = {edges, createTrace, edgeKind, nodeKind};
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.DijkstraTrace = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

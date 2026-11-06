@@ -1,5 +1,5 @@
 (() => {
-  const {edges, createTrace} = window.DijkstraTrace;
+  const {edges, createTrace, edgeKind, nodeKind} = window.DijkstraTrace;
   const trace = createTrace(), $ = id => document.getElementById(id);
   const coords = [[105,210],[285,75],[285,345],[545,75],[545,345],[755,210]];
   const letters = 'ABCDEF', svgNS = 'http://www.w3.org/2000/svg';
@@ -9,17 +9,14 @@
     const svg = $('graph'); svg.replaceChildren();
     edges.forEach(([u,v,w]) => {
       const [x1,y1] = coords[u], [x2,y2] = coords[v];
-      const match = (a,b) => (a===u&&b===v)||(a===v&&b===u);
-      const onPath = s.path.some((n,i) => i>0 && match(n,s.path[i-1]));
-      const active = s.edge && match(...s.edge);
-      svg.append(el('line',{x1,y1,x2,y2,class:`graph-edge${onPath?' path':active?' active':''}`}));
-      svg.append(el('text',{x:(x1+x2)/2, y:(y1+y2)/2-8, class:'weight','text-anchor':'middle'},w));
+      const kind = edgeKind(s,u,v);
+      svg.append(el('line',{x1,y1,x2,y2,class:`graph-edge ${kind}`,'data-edge':`${u}-${v}`}));
+      svg.append(el('text',{x:(x1+x2)/2, y:(y1+y2)/2-8, class:`weight ${kind}`,'text-anchor':'middle'},w));
     });
     coords.forEach(([x,y],n) => {
-      const queued = s.queue.some(e=>e.node===n && e.distance===s.dist[n]);
-      const state = s.current===n && s.kind!=='stale' ? 'current' : s.settled[n] ? 'done' : queued ? 'queued' : '';
-      const group = el('g',{class:`node ${state}`,transform:`translate(${x} ${y})`});
-      group.append(el('circle',{r:27}),el('text',{},letters[n]),el('text',{class:'distance',y:-44},Number.isFinite(s.dist[n])?s.dist[n]:'∞'),el('text',{class:'caption',y:46},n===0?'起點 0':n===5?'終點 5':String(n)));
+      const state = nodeKind(s,n);
+      const group = el('g',{class:`node ${state}`,transform:`translate(${x} ${y})`,'data-node':n});
+      group.append(el('circle',{r:27}),el('text',{},letters[n]),el('text',{class:'distance',y:-44},Number.isFinite(s.dist[n])?s.dist[n]:'∞'),el('text',{class:'caption',y:46},n===0?'起點 0':n===5?'終點 5':''));
       svg.append(group);
     });
   }
@@ -30,7 +27,7 @@
     ['pops','stale','relaxations'].forEach(k=>$(k).textContent=s[k]);
     const count=s.settled.filter(Boolean).length; $('settled-count').textContent=count; $('table-count').textContent=`定案 ${count} / 6`;
     $('table-body').replaceChildren(...s.dist.map((d,n)=>{const tr=document.createElement('tr');const status=s.settled[n]?'已定案':s.queue.some(q=>q.node===n&&q.distance===d)?'排隊中':'未探索';[`${letters[n]} (${n})`,Number.isFinite(d)?d:'∞',s.parent[n]<0?'—':`${letters[s.parent[n]]} (${s.parent[n]})`,status].forEach(t=>{const td=document.createElement('td');td.textContent=t;tr.append(td)});return tr}));
-    $('event-label').textContent={start:'START',pop:'取出',relax:'鬆弛',stale:'跳過',finish:'完成'}[s.kind]; $('event-title').textContent=s.title; $('event-detail').textContent=s.detail;
+    $('event-label').textContent={start:'START',pop:'取出',relax:'鬆弛',stale:'跳過',finish:'DONE'}[s.kind]; $('event-label').parentElement.classList.toggle('finished',s.kind==='finish'); $('event-title').textContent=s.title; $('event-detail').textContent=s.detail;
     $('step-count').textContent=`${index} / ${trace.length-1}`; $('progress-bar').style.width=`${index/(trace.length-1)*100}%`;
     $('previous').disabled=index===0; $('next').disabled=index===trace.length-1; $('play').disabled=index===trace.length-1; $('play').textContent=timer?'❚❚ 暫停':'▶ 自動播放';
   }

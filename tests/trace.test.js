@@ -18,3 +18,14 @@ for (const document of [html, readme]) {
   }
 }
 console.log('說明內容測試通過');
+const { edgeKind, nodeKind } = require('../trace.js');
+assert.equal(edgeKind(last, 0, 1), 'path');
+assert.equal(edgeKind(last, 1, 3), 'path');
+assert.equal(edgeKind(last, 3, 5), 'path');
+assert.equal(edgeKind(last, 1, 2), 'tree');
+assert.equal(edgeKind(last, 2, 4), 'tree');
+assert.equal(edgeKind(last, 0, 2), 'default');
+assert.equal(nodeKind(last, 0), 'path');
+assert.equal(nodeKind(last, 2), 'done');
+assert.equal(nodeKind(trace[0], 0), 'queued');
+console.log('路徑視覺狀態測試通過');

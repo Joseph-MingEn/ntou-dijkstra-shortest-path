@@ -11,15 +11,20 @@
 <body>
   <main class="shell">
     <header class="topbar">
-      <div><span class="eyebrow">資料結構 / GRAPH ALGORITHMS</span><h1>最短路徑派遣 <span>Dijkstra</span></h1></div>
-      <div class="route"><span>起點 <b>A <small>0</small></b></span><span class="arrow">→</span><span>終點 <b>F <small>5</small></b></span></div>
+      <a class="brand" href="#top"><span class="brand-mark">D</span><span>資料結構 <i>/</i> 圖形演算法</span></a>
+      <nav aria-label="頁首導覽"><a href="#explanation">閱讀原理 ↗</a><a href="https://github.com/Joseph-MingEn/ntou-dijkstra-shortest-path">GitHub ↗</a></nav>
     </header>
-    <div class="intro"><span class="pill">6 點 8 邊</span><span>無向加權圖</span><span class="intro-note">每次取出目前距離最小的節點，逐步找到最短路徑。</span></div>
+    <section class="hero" id="top">
+      <div class="hero-copy"><span class="eyebrow"><span class="eyebrow-dot"></span> DATA STRUCTURES · GRAPH 02</span><h1>最短路徑<span>，</span><br>一步一步看懂<span>。</span></h1><p>從起點出發，找出通往終點的最短路徑。跟著 Dijkstra，一次看懂優先佇列與距離更新。</p><div class="hero-links"><a class="hero-button" href="#demo">開始探索 <span>↓</span></a><a href="dijkstra.cpp">查看 C++ 原始碼 ↗</a></div></div>
+      <div class="answer"><span class="eyebrow">THE ANSWER</span><strong>9</strong><p>從 A 到 F 的最短距離</p><div>A → B → D → F</div></div>
+    </section>
+    <section class="demo-section" id="demo"><div class="section-heading"><div><span class="eyebrow">01 / INTERACTIVE DEMO</span><h2>觀察每一次選擇</h2></div><p>跟著最小堆一步步更新距離。<br>完成後以綠色粗線標示最短路徑。</p></div>
+    <div class="intro"><span class="pill">6 點 8 邊</span><span>無向加權圖</span><span class="intro-note">起點 A（0） <b>→</b> 終點 F（5）</span></div>
     <div class="layout">
       <section class="panel map-panel" aria-label="加權地圖與步驟控制">
-        <div class="panel-title"><span>加權地圖 <small>WEIGHTED GRAPH</small></span><span>6 節點 · 8 邊</span></div>
+        <div class="panel-title"><span><small>WEIGHTED GRAPH</small><br>加權地圖</span><span class="graph-count">6 節點 · 8 邊</span></div>
         <svg id="graph" viewBox="0 0 860 420" role="img" aria-label="六個節點、八條帶權重的無向邊"></svg>
-        <div class="legend"><span><i class="dot current"></i>正在展開</span><span><i class="dot done"></i>已定案</span><span><i class="dot queued"></i>在佇列裡</span><span><i class="dot unknown"></i>未探索</span><span><i class="line active"></i>正在鬆弛</span><span><i class="line path"></i>最短路徑</span></div>
+        <div class="legend"><span><i class="dot current"></i>正在展開</span><span><i class="dot done"></i>已定案</span><span><i class="dot queued"></i>在佇列裡</span><span><i class="dot unknown"></i>未探索</span><span><i class="line active"></i>正在鬆弛</span><span><i class="line tree"></i>parent 邊</span><span><i class="line path"></i>最短路徑</span></div>
         <div class="controls"><button id="previous">← 上一步</button><button id="next" class="primary">下一步 →</button><button id="play">▶ 自動播放</button><button id="reset">↺ 重來</button><div class="progress-wrap"><div class="progress"><div id="progress-bar"></div></div><span id="step-count"></span></div></div>
         <div class="explanation" aria-live="polite"><span id="event-label" class="event-label">START</span><div><h2 id="event-title"></h2><p id="event-detail"></p></div></div>
       </section>
@@ -28,8 +33,9 @@
         <section class="panel table-panel"><div class="panel-title"><span>DIST / PARENT 表</span><span id="table-count"></span></div><div class="table-wrap"><table><thead><tr><th>點</th><th>DIST</th><th>PARENT</th><th>狀態</th></tr></thead><tbody id="table-body"></tbody></table></div></section>
       </aside>
     </div>
-    <section class="panel lesson guide" aria-labelledby="guide-title">
-      <div class="guide-heading"><span class="eyebrow">DIJKSTRA GUIDE</span><h2 id="guide-title">看懂最短路徑</h2><p>從演算法原理，到本題的成本計算。</p><a class="repo-link" href="https://github.com/Joseph-MingEn/ntou-dijkstra-shortest-path">查看 GitHub 專案 ↗</a></div>
+    </section>
+    <section class="panel lesson guide" id="explanation" aria-labelledby="guide-title">
+      <div class="guide-heading"><span class="eyebrow">02 / HOW IT WORKS</span><h2 id="guide-title">看懂最短路徑</h2><p>從演算法原理，到本題的成本計算。</p><a class="repo-link" href="https://github.com/Joseph-MingEn/ntou-dijkstra-shortest-path">查看 GitHub 專案 ↗</a></div>
       <div class="guide-content">
         <section><h3>01 / 演算法原理</h3><p>Dijkstra 從起點出發，每次選出目前距離最小的有效節點，並檢查它的相鄰邊。由於邊權非負，其他尚未定案的路徑必須先經過距離<strong>至少一樣大</strong>的候選點，繼續走不會更短，因此這個節點的距離可以定案。距離可能相等；若有負權邊，就不能使用這個推論。</p></section>
         <section><h3>02 / 演算法步驟</h3><ol><li>初始化：起點 dist 為 0，其餘為 ∞；將 (0, 起點) 放入最小堆。</li><li>取出距離最小的 (dist, node)。若取出的距離與目前 dist 不同，代表條目已過期，直接跳過。</li><li>檢查每條相鄰邊：若 <code>dist[node] + weight &lt; dist[next]</code>，就更新距離與 parent，並將新條目放入堆中。這稱為「鬆弛」。</li><li>重複直到佇列清空；從終點沿 parent 反向追溯，再反轉得到完整路徑。</li></ol></section>
