@@ -43,6 +43,7 @@
         <section><h3>04 / 運算成本</h3><p>設 V 為節點數、E 為無向邊數。本實作使用鄰接串列與最小堆，採 lazy deletion 時，<strong>時間複雜度</strong>為 O(V + E log(E + 1))，堆最多可保留 O(E) 個條目。對本題這類簡單圖，也常寫成 O((V + E) log V)；本題 V = 6、E = 8。</p><p><strong>空間複雜度</strong>為 O(V + E)：鄰接串列存放節點及每條無向邊的兩個方向，dist／parent 各需 O(V)，堆最多需 O(E)。</p></section>
         <section><h3>05 / 和 BFS 比較</h3><p>BFS 使用佇列，時間與空間都是 O(V + E)，適合無權圖，或每條邊權都相同的圖；它找到的是經過邊數最少的路。Dijkstra 使用最小堆，依累積權重選路，能處理不同的非負邊權，時間成本較高。</p><p>本題從 A 到 F 有兩條同為 3 條邊的路：A → B → D → F 成本是 2 + 4 + 3 = 9；A → C → E → F 成本是 5 + 2 + 6 = 13。BFS 只看見兩條路邊數相同，無法判斷成本 9 較小；Dijkstra 會比較權重並得到指定答案。</p></section>
         <section><h3>06 / 實作心得</h3><p>透過逐步追蹤距離和佇列，我理解到「最少經過幾條邊」和「權重總和最低」是不同問題。較短的新路徑出現後，舊距離仍可能留在優先佇列，因此要用過期條目檢查避免重複展開；parent 則讓數值答案能還原成完整路徑。這次也讓我注意到 Dijkstra 的前提是邊權非負，選演算法時要先看清楚題目的權重條件。</p></section>
+        <section><h3>07 / 個人貢獻與 AI 協作說明</h3><p>本人負責提出作業題目與驗收條件，包括指定圖形資料、C++ 演算法要求、正確答案與說明項目，並提供介面參考圖、指定視覺方向與 README／網頁等交付需求；成果由本人檢視並提出調整方向。</p><p>AI 工具協助規劃工作流程、撰寫與整理 C++ Dijkstra 程式及互動網頁、補充正確性證明、BFS 比較、成本分析與文件，並協助推送至 GitHub Pages。程式與文件採 AI 協作產出，並非本人逐行獨立撰寫；本人仍需理解並能說明非負邊權限制、最小堆與過期條目跳過、parent 路徑回溯，以及時間與空間複雜度。</p></section>
         <div class="guide-links"><a href="dijkstra.cpp">查看 C++ 原始碼 ↗</a><a href="https://github.com/Joseph-MingEn/ntou-dijkstra-shortest-path">GitHub 專案儲存庫 ↗</a><a href="https://github.com/Joseph-MingEn/ntou-dijkstra-shortest-path#readme">閱讀 README ↗</a></div>
       </div>
     </section>
